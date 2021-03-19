@@ -1,6 +1,6 @@
 {
 	"name": "usescrubbler",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"description": "React hook for scrubbing numeric values in the input",
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",
