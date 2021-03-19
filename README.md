@@ -17,7 +17,7 @@ body.scrubbling > * {
 
 2. In react component:
 ```
-    const { value, onChange, onMouseDown } = useScrubbler({
+    const { value, onChange, getScrubbler } = useScrubbler({
         value: 1,
         min: -1000,
         max: 1000,
@@ -37,7 +37,7 @@ body.scrubbling > * {
     // jsx
 
     <label>
-        <span onMouseDown={onMouseDown}>Drag me</span>
+        <span {...getScrubbler()}>Drag me</span>
         <input value={value} onChange={handleChange} />
     </label>
 

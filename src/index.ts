@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
-import Format from './format';
-import { Props, Value } from './types';
+import { useCallback, useEffect, useState, useRef } from "react";
+import Format from "./format";
+import { getClientX } from "./helpers";
+import { Props, Value } from "./types";
 
-const defaultClassName = 'scrubbing';
+const defaultClassName = "scrubbing";
 
 const useScrubbler = ({
 	value: initialValue,
@@ -11,7 +12,7 @@ const useScrubbler = ({
 	step,
 	isInteger,
 	toFixed,
-	className,
+	className
 }: Props) => {
 	const [value, setValue] = useState<Value>(
 		Format.getValueWithinLimits(min, max, initialValue, isInteger, toFixed)
@@ -20,8 +21,10 @@ const useScrubbler = ({
 	const prevValueRef = useRef(value);
 	const prevPositionRef = useRef(0);
 
-	const onMouseDown = useCallback(
-		({ clientX }: React.MouseEvent) => {
+	const onScrubble = useCallback(
+		(e: React.MouseEvent | React.TouchEvent) => {
+			const clientX = 0;
+
 			prevPositionRef.current = clientX;
 
 			setValue((prev: Value) => {
@@ -32,16 +35,24 @@ const useScrubbler = ({
 			capturingMode.current = true;
 			document.body.classList.add(className || defaultClassName);
 		},
-		[capturingMode, setValue, prevValueRef, prevPositionRef, className],
+		[capturingMode, setValue, prevValueRef, prevPositionRef, className]
+	);
+
+	const getScrubbler = useCallback(
+		() => ({
+			onMouseDown: onScrubble,
+			onTouchStart: onScrubble
+		}),
+		[onScrubble]
 	);
 
 	useEffect(() => {
-		const mouseMove = (e: MouseEvent) => {
+		const move = (e: MouseEvent | TouchEvent) => {
 			if (capturingMode.current) {
 				e.preventDefault();
 				e.stopPropagation();
 
-				const { clientX } = e;
+				const clientX = getClientX(e);
 				const dx = (clientX - prevPositionRef.current) * (Number(step) || 1);
 				let i1 = (Number(prevValueRef.current) || 0) + dx;
 
@@ -56,7 +67,7 @@ const useScrubbler = ({
 			}
 		};
 
-		const mouseUp = (e: MouseEvent) => {
+		const up = (e: MouseEvent | TouchEvent) => {
 			if (capturingMode.current) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -65,20 +76,35 @@ const useScrubbler = ({
 			}
 		};
 
-		/* todo: - consider testing and implementing support for touch */
-		document.addEventListener('mousemove', mouseMove);
-		document.addEventListener('mouseup', mouseUp);
+		document.addEventListener("mousemove", move);
+		document.addEventListener("touchmove", move);
+		document.addEventListener("mouseup", up);
+		document.addEventListener("touchend", up);
 
 		return () => {
-			document.removeEventListener('mousemove', mouseMove);
-			document.removeEventListener('mouseup', mouseUp);
+			document.removeEventListener("mousemove", move);
+			document.removeEventListener("touchmove", move);
+			document.removeEventListener("mouseup", up);
+			document.removeEventListener("touchend", up);
 		};
-	}, [capturingMode, setValue, prevPositionRef, prevValueRef, min, max, step, isInteger, toFixed, className]);
+	}, [
+		capturingMode,
+		setValue,
+		prevPositionRef,
+		prevValueRef,
+		min,
+		max,
+		step,
+		isInteger,
+		toFixed,
+		className
+	]);
 
 	return {
 		value,
 		onChange: setValue,
-		onMouseDown,
+		onScrubble,
+		getScrubbler
 	};
 };
 
