@@ -1,0 +1,36 @@
+{
+	"name": "usescrubbler",
+	"version": "1.0.0",
+	"description": "React hook for scrubbing numeric values in the input",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"files": [
+		"lib/**/*"
+	],
+	"scripts": {
+		"build": "tsc",
+		"prepare" : "npm run build",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/PolyDevil/useScrubbler.git"
+	},
+	"keywords": [
+		"react",
+		"hooks"
+	],
+	"author": "polydevil",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/PolyDevil/useScrubbler/issues"
+	},
+	"homepage": "https://github.com/PolyDevil/useScrubbler#readme",
+	"dependencies": {
+		"react": "^16.8.0"
+	},
+	"devDependencies": {
+		"@types/react": "^17.0.3",
+		"typescript": "^4.2.3"
+	}
+}
